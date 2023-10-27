@@ -10,10 +10,12 @@ cpf numeric (11) not null,
 data_nascimento date,
 email varchar(100) not null,
 telefone numeric (13) not null,
-id_matricula int,
+id_matricula int
 
-foreign key (id_matricula) references matricula (id_matricula)
 );
+
+ALTER TABLE alunos
+ADD CONSTRAINT id_matricula FOREIGN KEY (id_matricula) REFERENCES matriculas (id_matricula);
 
 insert into alunos(id_aluno, nome, cpf, data_nascimento, email, telefone) values
 (1, 'Vitor', 72945129448, '2007-03-16', 'vitorhugo@gmail.com', 5511991784265),
@@ -41,8 +43,10 @@ nome_curso varchar(100) not null,
 carga_horaria numeric not null,
 id_aluno integer
 
-
 );
+
+ALTER TABLE cursos
+ADD CONSTRAINT id_aluno FOREIGN KEY (id_aluno) REFERENCES alunos (id_aluno);
 
 insert into cursos(id_curso, nome_curso, carga_horaria, id_aluno) values
 (1, 'Engenharia', 1570, 1),
@@ -58,7 +62,10 @@ id_curso integer,
 id_professor integer
 
 );
-
+ALTER TABLE materias
+ADD CONSTRAINT id_curso FOREIGN KEY (id_curso) REFERENCES cursos (id_curso);
+ALTER TABLE materias
+ADD CONSTRAINT id_professor FOREIGN KEY (id_professor) REFERENCES professores (id_professor);
 
 
 insert into materias(id_materia, nome_materia, carga_horaria, id_curso, id_professor) values
@@ -75,6 +82,9 @@ id_curso integer
 
 );
 
+ALTER TABLE turmas
+ADD CONSTRAINT id_curso FOREIGN KEY (id_curso) REFERENCES cursos (id_curso);
+
 insert into turmas(id_turma, codigo_turma, quantidade_alunos, id_curso) values
 (1, 'EG1AIT', 16, 1),
 (2, 'NT2CIT', 34, 2),
@@ -87,7 +97,15 @@ data_matricula date,
 id_aluno integer,
 id_curso integer
 
+-- foreign key (id_aluno) references alunos (id_aluno),
+-- foreign key (id_curso) references cursos (id_curso)
+
 );
+ALTER TABLE matriculas
+ADD CONSTRAINT id_aluno FOREIGN KEY (id_aluno) REFERENCES alunos (id_aluno);
+
+ALTER TABLE matriculas
+ADD CONSTRAINT id_curso FOREIGN KEY (id_curso) REFERENCES cursos (id_curso);
 
 insert into matriculas(id_matricula, data_matricula, id_aluno, id_curso) values
 (1, '2021-01-25', 1, 1),
@@ -100,8 +118,10 @@ id_nota integer primary key,
 nota float,
 data_avaliacao date,
 id_aluno integer,
-id_turma integer
+id_turma integer,
 
+foreign key (id_aluno) references alunos (id_aluno),
+foreign key (id_turma) references turmas (id_turma)
 
 );
 
@@ -116,7 +136,10 @@ id_presenca integer primary key,
 data_aula date,
 status_aluno varchar(100) not null,
 id_aluno integer,
-id_turma integer
+id_turma integer,
+
+foreign key (id_aluno) references alunos (id_aluno),
+foreign key (id_turma) references turmas (id_turma)
 
 );
 
@@ -131,7 +154,10 @@ id_evento integer primary key,
 tema_evento varchar(100) not null,
 data_evento date,
 id_curso integer,
-id_turma integer
+id_turma integer,
+
+foreign key (id_curso) references cursos (id_curso),
+foreign key (id_turma) references turmas (id_turma)
 
 
 );
@@ -165,4 +191,4 @@ inner join matriculas on alunos.id=matriculas.aluno_id
 inner join cursos on matriculas.curso_id=cursos.id;
 
 
-
+drop database sistema_educacional;
